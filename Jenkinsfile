@@ -21,7 +21,7 @@ pipeline {
                 script {
                     // 'test/node/' 디렉토리 안에서 Docker 이미지를 빌드합니다.
                     dir('test/node') {
-                        sh "docker build -t ${FULL_IMAGE_NAME} ."
+                        sh "/opt/homebrew/bin/docker build -t ${FULL_IMAGE_NAME} ."
                     }
                 }
             }
