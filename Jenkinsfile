@@ -28,6 +28,7 @@ pipeline {
         stage('Push Image') {
             steps {
                 script{
+                 
                     docker.withRegistry("https://" + registry, "ecr:ap-northeast-2:" + registryCredential) {   // withRegistry(이미지 올릴 ECR 주소, Credentail ID) 이렇게 셋팅하면 된다.
                         app.push("${version}")   // tag 정보
                         app.push("latest")       // tag 정보
