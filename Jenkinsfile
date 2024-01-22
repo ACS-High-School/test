@@ -1,7 +1,7 @@
 pipeline {
  
     tools {
-        maven('mvn363')         // 개발 Jenkins에 maven이 'mvn363'이라는 이름으로 설치가 되어 있어 pipeline 스크립트에서 사용을 위해 명시를 해주었다.
+        maven('mvn')         // 개발 Jenkins에 maven이 'mvn363'이라는 이름으로 설치가 되어 있어 pipeline 스크립트에서 사용을 위해 명시를 해주었다.
     }
  
     environment {
