@@ -6,7 +6,7 @@ pipeline {
         DOCKER_REPO_URI = "052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         AWS_CREDENTIALS_ID = "AWS_ECR"
-        DEPLOYMENT_FILE = "test/node/deployment.yaml" // 파일 경로 수정
+        DEPLOYMENT_FILE = "node/deployment.yaml" // 파일 경로 수정
     }
     stages {
         stage('Checkout') {
@@ -31,9 +31,20 @@ pipeline {
         }
         stage('Update Deployment File') {
             steps {
-                script {
-                    // deployment.yaml 파일에서 이미지 태그를 업데이트합니다.
-                    sh "sed -i '.bak' -e 's|${DOCKER_REPO_URI}:.*|${DOCKER_REPO_URI}:${IMAGE_TAG}|' ${DEPLOYMENT_FILE}"
+                def previousTag = sh(script: "echo $((BUILD_NUMBER - 1))", returnStdout: true).trim()
+                
+                withCredentials([usernamePassword(credentialsId: 'GitCredential', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    script {
+                        sh "git config --local credential.helper '!f() { echo username=\\$GIT_USERNAME; echo password=\\$GIT_PASSWORD; }; f'"
+                        // deployment.yaml 파일에서 이미지 태그를 업데이트합니다.
+                        sh "sed -i 's/${DOCKER_REPO_URI}:${previousTag}/${DOCKER_REPO_URI}:${env.NEW_TAG}/g' ${DEPLOYMENT_FILE}"
+
+                        // 변경 사항을 git에 커밋하고 푸시합니다.
+                        sh """
+                        git add ${DEPLOYMENT_FILE}
+                        git commit -m 'Update the image tag to ${env.NEW_TAG}'
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ACS-High-School/test.git HEAD:main
+                        """
                 }
             }
         }
