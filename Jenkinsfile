@@ -41,7 +41,7 @@ pipeline {
                         sh """
                         git add ${DEPLOYMENT_FILE}
                         git commit -m 'Update the image tag to ${IMAGE_TAG}'
-                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ACS-High-School/test.git HEAD:main
+                        git push origin HEAD:main
                         """
                     }
                 }
