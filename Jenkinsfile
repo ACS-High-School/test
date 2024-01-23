@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     // Docker 이미지를 빌드합니다.
-                    sh "docker build -t ${DOCKER_REPO_URI}:${IMAGE_TAG} ."
+                    sh "/opt/homebrew/bin/docker build -t ${DOCKER_REPO_URI}:${IMAGE_TAG} ."
                 }
             }
         }
@@ -26,9 +26,9 @@ pipeline {
             steps {
                 script {
                     // ECR에 로그인합니다.
-                    sh "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${DOCKER_REPO_URI}"
+                    sh "aws ecr get-login-password --region ap-northeast-2 | /opt/homebrew/bin/docker login --username AWS --password-stdin ${DOCKER_REPO_URI}"
                     // Docker 이미지를 ECR로 푸시합니다.
-                    sh "docker push ${DOCKER_REPO_URI}:${IMAGE_TAG}"
+                    sh "/opt/homebrew/bin/docker push ${DOCKER_REPO_URI}:${IMAGE_TAG}"
                 }
             }
         }
