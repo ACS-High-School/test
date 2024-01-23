@@ -5,7 +5,7 @@ node {
 
     stage('Build image') {
         // ECR 레포지토리 주소로 이미지 빌드
-        app = /opt/homebrew/bin/docker.build("052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins")
+        app = docker.build("052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins")
     }
 
     stage('Push image') {
