@@ -7,7 +7,7 @@ pipeline {
         AWS_CREDENTIALS_ID = "AWS_ECR"
         PATH = "/opt/homebrew/bin:$PATH"
     }
-    }
+    
     stages {
         stage('Checkout') {
             steps {
