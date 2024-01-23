@@ -6,7 +6,7 @@ pipeline {
         DOCKER_REPO_URI = "052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         AWS_CREDENTIALS_ID = "AWS_ECR"
-        DEPLOYMENT_FILE = "kubetest/node/deployment.yaml" // 파일 경로 수정
+        DEPLOYMENT_FILE = "node/deployment.yaml" // 파일 경로 수정
     }
     stages {
         stage('Checkout') {
@@ -44,7 +44,7 @@ pipeline {
                         // 변경 사항을 git에 커밋하고 푸시합니다.
                         sh """
                         git add ${DEPLOYMENT_FILE}
-                        git commit -m 'Update the image tag to ${IMAGE_TAG}'
+                        git commit -m 'Update the image tag to ${IMAGE_TAG} [skip ci]'
                         git push origin HEAD:main
                         """
                     }
