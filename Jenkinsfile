@@ -42,7 +42,7 @@ pipeline {
 
                     
                     // AWS 자격증명을 사용하여 ECR에 로그인합니다.
-                    sh "/opt/homebrew/bin/aws ecr get-login-password --region ${REGION} | /opt/homebrew/bin/docker login --username AWS --password-stdin ${ECR_PATH}"
+                    sh "/opt/homebrew/bin/aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_PATH}"
                     
                     // Docker 이미지를 ECR로 푸시합니다.
                     sh "/opt/homebrew/bin/docker push $IMAGE_NAME:$BUILD_NUMBER"
