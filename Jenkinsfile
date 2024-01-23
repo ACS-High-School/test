@@ -4,7 +4,7 @@ pipeline {
         // 환경 변수 설정
         PATH = "/usr/local/bin:/opt/homebrew/bin:$PATH" // Docker 및 AWS CLI 경로 추가
         DOCKER_REPO_URI = "052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins"
-        IMAGE_TAG = "latest"
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
         AWS_CREDENTIALS_ID = "AWS_ECR"
     }
     stages {
