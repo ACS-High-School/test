@@ -6,6 +6,7 @@ pipeline {
         DOCKER_REPO_URI = "052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         AWS_CREDENTIALS_ID = "AWS_ECR"
+        DEPLOYMENT_FILE = "test/node/deployment.yaml" // 파일 경로 수정
     }
     stages {
         stage('Checkout') {
@@ -25,6 +26,14 @@ pipeline {
                 script {
                     sh "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${DOCKER_REPO_URI}"
                     sh "docker push ${DOCKER_REPO_URI}:${IMAGE_TAG}"
+                }
+            }
+        }
+        stage('Update Deployment File') {
+            steps {
+                script {
+                    // deployment.yaml 파일에서 이미지 태그를 업데이트합니다.
+                    sh "sed -i '.bak' -e 's|${DOCKER_REPO_URI}:.*|${DOCKER_REPO_URI}:${IMAGE_TAG}|' ${DEPLOYMENT_FILE}"
                 }
             }
         }
