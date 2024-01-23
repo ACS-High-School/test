@@ -31,13 +31,15 @@ pipeline {
         }
         stage('Update Deployment File') {
             steps {
-                def previousImageTag = "${env.BUILD_NUMBER.toInteger() - 1}"
+                script{
+                    previousBuildNumber = sh(script: "echo \$((IMAGE_TAG - 1))", returnStdout: true).trim()
+                }
                 
                 withCredentials([usernamePassword(credentialsId: 'GitCredential', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     script {
                         sh "git config --local credential.helper '!f() { echo username=\\$GIT_USERNAME; echo password=\\$GIT_PASSWORD; }; f'"
                         // deployment.yaml 파일에서 이미지 태그를 업데이트합니다.
-                        sh "sed -i '' 's|${DOCKER_REPO_URI}:${perviousImageTag}|${DOCKER_REPO_URI}:${IMAGE_TAG}|' ${DEPLOYMENT_FILE}"
+                        sh "sed -i '' 's|${DOCKER_REPO_URI}:${previousBuildNumber}|${DOCKER_REPO_URI}:${IMAGE_TAG}|' ${DEPLOYMENT_FILE}"
 
                         // 변경 사항을 git에 커밋하고 푸시합니다.
                         sh """
