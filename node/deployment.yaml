@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: nodejs-app
-        image: 052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins/jenkins:50
+        image: 052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins/jenkins:58
         ports:
         - containerPort: 8080
