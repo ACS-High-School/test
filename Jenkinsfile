@@ -35,12 +35,12 @@ pipeline {
                     script {
                         sh "git config --local credential.helper '!f() { echo username=\\$GIT_USERNAME; echo password=\\$GIT_PASSWORD; }; f'"
                         // deployment.yaml 파일에서 이미지 태그를 업데이트합니다.
-                        sh "sed -i '' 's|${DOCKER_REPO_URI}:.*|${DOCKER_REPO_URI}:${IAMGE_TAG}|' ${DEPLOYMENT_FILE}"
+                        sh "sed -i '' 's|${DOCKER_REPO_URI}:.*|${DOCKER_REPO_URI}:${IMAGE_TAG}|' ${DEPLOYMENT_FILE}"
 
                         // 변경 사항을 git에 커밋하고 푸시합니다.
                         sh """
                         git add ${DEPLOYMENT_FILE}
-                        git commit -m 'Update the image tag to ${env.NEW_TAG}'
+                        git commit -m 'Update the image tag to ${IMAGE_TAG}'
                         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ACS-High-School/test.git HEAD:main
                         """
                     }
