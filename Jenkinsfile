@@ -43,6 +43,7 @@ pipeline {
                         git commit -m 'Update the image tag to ${env.NEW_TAG}'
                         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ACS-High-School/test.git HEAD:main
                         """
+                    }
                 }
             }
         }
@@ -56,3 +57,4 @@ pipeline {
         }
     }
 }
+
