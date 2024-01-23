@@ -1,22 +1,43 @@
-node {
-    stage('Clone repository') {
-        checkout scm
+pipeline {
+    agent any
+    environment {
+        // 환경 변수 설정
+        DOCKER_REPO_URI = "052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins"
+        IMAGE_TAG = "latest"
+        AWS_CREDENTIALS_ID = "AWS_ECR"
     }
-
-    stage('Build image') {
-        // ECR 레포지토리 주소로 이미지 빌드
-        app = docker.build("052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins")
+    stages {
+        stage('Checkout') {
+            steps {
+                // GitHub 레포지토리에서 소스 코드를 가져옵니다.
+                checkout scm
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Docker 이미지를 빌드합니다.
+                    sh "docker build -t ${DOCKER_REPO_URI}:${IMAGE_TAG} ."
+                }
+            }
+        }
+        stage('Push to ECR') {
+            steps {
+                script {
+                    // ECR에 로그인합니다.
+                    sh "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${DOCKER_REPO_URI}"
+                    // Docker 이미지를 ECR로 푸시합니다.
+                    sh "docker push ${DOCKER_REPO_URI}:${IMAGE_TAG}"
+                }
+            }
+        }
     }
-
-    stage('Push image') {
-        // 현재 사용자의 Docker 자격 증명 삭제
-        sh 'rm ~/.dockercfg || true'
-        sh 'rm ~/.docker/config.json || true'
-
-        // Docker 레지스트리에 로그인하고 이미지를 푸시
-        docker.withRegistry('https://052402487676.dkr.ecr.ap-northeast-2.amazonaws.com', 'ecr:ap-northeast-2:AWS_ECR') {
-            app.push("${env.BUILD_NUMBER}")
-            app.push("latest")
+    post {
+        success {
+            echo 'Build and push process completed successfully.'
+        }
+        failure {
+            echo 'Build and push process failed.'
         }
     }
 }
