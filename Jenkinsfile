@@ -44,7 +44,7 @@ pipeline {
                         // 변경 사항을 git에 커밋하고 푸시합니다.
                         sh """
                         git add ${DEPLOYMENT_FILE}
-                        git commit -m 'Update the image tag to ${IMAGE_TAG} [skip ci]'
+                        git commit -m 'Update the image tag to ${IMAGE_TAG} [ci skip]'
                         git push origin HEAD:main
                         """
                     }
