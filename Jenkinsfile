@@ -1,62 +1,22 @@
-pipeline {
-    agent any
-
-    environment {
-        // 환경 변수
-        IMAGE_NAME = '052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins/my-nodejs-app'
-        ECR_PATH = '052402487676.dkr.ecr.ap-northeast-2.amazonaws.com'
-        REGION = 'ap-northeast-2'
-        AWS_CREDENTIAL_NAME = 'AWS_ECR' // Jenkins에서 설정한 자격증명 ID
+node {
+    stage('Clone repository') {
+        checkout scm
     }
 
-    stages {
-        stage('Clone repository') {
-            steps {
-                checkout scm
-            }
-        }
+    stage('Build image') {
+        // ECR 레포지토리 주소로 이미지 빌드
+        app = docker.build("052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins")
+    }
 
-        stage('dockerizing project by dockerfile') {
-            steps {
-                script {
-                    sh '''
-                    /opt/homebrew/bin/docker build -t $IMAGE_NAME:$BUILD_NUMBER .
-                    /opt/homebrew/bin/docker tag $IMAGE_NAME:$BUILD_NUMBER $IMAGE_NAME:latest
-                    '''
-                }
-            }
-            post {
-                success {
-                    echo 'success dockerizing project'
-                }
-                failure {
-                    error 'fail dockerizing project' // exit pipeline
-                }
-            }
-        }
+    stage('Push image') {
+        // 현재 사용자의 Docker 자격 증명 삭제
+        sh 'rm ~/.dockercfg || true'
+        sh 'rm ~/.docker/config.json || true'
 
-        stage('upload aws ECR') {
-            steps {
-                script {
-                    // Cleanup current user docker credentials
-
-                    
-                    // AWS 자격증명을 사용하여 ECR에 로그인합니다.
-                    sh "/opt/homebrew/bin/aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_PATH}"
-                    
-                    // Docker 이미지를 ECR로 푸시합니다.
-                    sh "/opt/homebrew/bin/docker push $IMAGE_NAME:$BUILD_NUMBER"
-                    sh "/opt/homebrew/bin/docker push $IMAGE_NAME:latest"
-                }
-            }
-            post {
-                success {
-                    echo 'success upload image'
-                }
-                failure {
-                    error 'fail upload image' // exit pipeline
-                }
-            }
+        // Docker 레지스트리에 로그인하고 이미지를 푸시
+        docker.withRegistry('https://052402487676.dkr.ecr.ap-northeast-2.amazonaws.com', 'ecr:ap-northeast-2:AWS_ECR') {
+            app.push("${env.BUILD_NUMBER}")
+            app.push("latest")
         }
     }
 }
