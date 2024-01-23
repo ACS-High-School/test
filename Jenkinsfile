@@ -26,7 +26,7 @@ pipeline {
             steps {
                 script {
                     // ECR에 로그인합니다.
-                    sh "aws ecr get-login-password --region ap-northeast-2 | /opt/homebrew/bin/docker login --username AWS --password-stdin ${DOCKER_REPO_URI}"
+                    sh "/opt/homebrew/bin/aws ecr get-login-password --region ap-northeast-2 | /opt/homebrew/bin/docker login --username AWS --password-stdin ${DOCKER_REPO_URI}"
                     // Docker 이미지를 ECR로 푸시합니다.
                     sh "/opt/homebrew/bin/docker push ${DOCKER_REPO_URI}:${IMAGE_TAG}"
                 }
