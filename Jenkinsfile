@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     // Docker 이미지를 빌드합니다.
-                    sh "docker build -t ${FULL_IMAGE_NAME} ."
+                    sh "/opt/homebrew/bin/docker build -t ${FULL_IMAGE_NAME} ."
                 }
             }
         }
