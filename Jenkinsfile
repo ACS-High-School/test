@@ -52,6 +52,7 @@ pipeline {
             }
         }
     }
+    
     post {
         success {
             echo 'Build and push process completed successfully.'
