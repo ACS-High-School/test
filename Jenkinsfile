@@ -5,6 +5,8 @@ pipeline {
         DOCKER_REPO_URI = "052402487676.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins"
         IMAGE_TAG = "latest"
         AWS_CREDENTIALS_ID = "AWS_ECR"
+        PATH = "/opt/homebrew/bin:$PATH"
+    }
     }
     stages {
         stage('Checkout') {
