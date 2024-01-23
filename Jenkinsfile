@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script {
                     // Cleanup current user docker credentials
-                    sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
+
                     
                     // AWS 자격증명을 사용하여 ECR에 로그인합니다.
                     sh "/opt/homebrew/bin/aws ecr get-login-password --region ${REGION} | /opt/homebrew/bin/docker login --username AWS --password-stdin ${ECR_PATH}"
